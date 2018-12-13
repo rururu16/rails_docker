@@ -30,13 +30,18 @@ class BoardsController < ApplicationController
   end
 
   def update
-    @board.update(board_params)
-
-    redirect_to @board
+    if @board.update(board_params)
+      flash[:notice] = "掲示板を編集しました"
+      redirect_to @board
+    else
+      flash[:board] = @board
+      flash[:error_messages] = @board.errors.full_messages
+      redirect_back fallback_location: boards_path
+    end
   end
 
   def destroy
-    @board.delete
+    @board.destroy
     redirect_to boards_path, flash: { notice: "「#{@board.title}」の掲示板が削除されました" }
   end
 
